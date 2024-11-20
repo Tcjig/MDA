@@ -9,7 +9,7 @@ import (
 )
 
 // TransferSmallFile 传输单个文件函数
-func TransferSmallFile(filePath, serverAddr string) error {
+func TransferSmallFile(filePath, serverAddr string, conn net.Conn) error {
 
 	// 去除掉两边的空格和换行符
 	filePath = strings.TrimSpace(filePath)
@@ -31,13 +31,6 @@ func TransferSmallFile(filePath, serverAddr string) error {
 	if fileInfo.Size() == 0 { // 若文件大小为0
 		return fmt.Errorf("传输的文件内容为空，无法进行传输")
 	}
-
-	// 连接到服务器
-	conn, err := net.Dial("tcp", serverAddr)
-	if err != nil {
-		return fmt.Errorf("连接服务器失败：%v", err)
-	}
-	defer conn.Close()
 
 	// 发送文件大小
 	sizeBuffer := fmt.Sprintf("%010d", fileInfo.Size()) // 固定文件大小格式化为10位的字符串
@@ -80,5 +73,6 @@ func TransferSmallFile(filePath, serverAddr string) error {
 	// 确保最后刷新到100%
 	fmt.Printf("\r传输进度：100.00%%\n")
 	fmt.Println("\n文件传输已完成")
+
 	return nil // 表示文件传输成功
 }

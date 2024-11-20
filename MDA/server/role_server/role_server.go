@@ -1,7 +1,7 @@
 package role_server
 
 import (
-	"MDAtest/server/file_receive"
+	"MDA/server/file_receive"
 	"bufio"
 	"fmt"
 	"net"
@@ -54,6 +54,15 @@ func handleClient(conn net.Conn) {
 	}
 
 	fmt.Printf("文件接收成功，已保存至：%s\n", savePath)
+
+	// 发送确认消息给客户端
+	confirmationMessage := "文件接收成功"
+	_, err = conn.Write([]byte(confirmationMessage)) // 向客户端发送确认消息
+	if err != nil {
+		fmt.Printf("发送确认消息失败，具体错误是：%v\n", err)
+		return
+	}
+	fmt.Println("已向客户端发送文件接收成功的确认消息")
 }
 
 // 获取用户的保存路径

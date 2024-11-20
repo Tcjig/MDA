@@ -71,5 +71,6 @@ func ReceiveSmallFile(conn net.Conn, savePath string) error {
 		}
 	}
 	fmt.Println("\n文件接收完成")
+
 	return nil
 }
