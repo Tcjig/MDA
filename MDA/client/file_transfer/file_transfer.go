@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// TransferSmallFile 传输单个文件函数
 func TransferSmallFile(filePath, serverAddr string) error {
 	// 进行打开文件操作
 	file, err := os.Open(filePath) // 根据路径打开文件

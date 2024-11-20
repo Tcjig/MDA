@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// Client 请求与服务端函数，并调用传输文件函数
 func Client() {
 	fmt.Println("客户端启动中，请稍后...")
 

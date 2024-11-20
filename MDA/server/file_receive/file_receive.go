@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// ReceiveSmallFile 接收单个文件函数
 func ReceiveSmallFile(conn net.Conn, savePath string) error {
 	// 读取文件大小，固定长度为10字节
 	sizeBuffer := make([]byte, 10)  // 创建一个包含10个字节的数组作为一个缓冲区，注意这也意味着只能传10^10大小的文件

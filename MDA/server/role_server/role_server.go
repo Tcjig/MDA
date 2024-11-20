@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// Server 监听客户端及等待客户端连接，并调用文件接收函数
 func Server() {
 	fmt.Println("服务端启动中，请稍后...")
 
