@@ -2,6 +2,7 @@ package file_transfer
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 )
@@ -37,35 +38,34 @@ func TransferSmallFile(filePath, serverAddr string) error {
 		fmt.Println("发送文件大小失败，具体错误是：", err)
 	}
 
+	// 发送文件内容
 	buffer := make([]byte, 1024)
 	totalSent := 0
 	for {
 		n, err := file.Read(buffer)
 		if err != nil {
+			if err != io.EOF {
+				break
+			}
 			fmt.Printf("读取文件失败,具体错误是：%v", err)
 		}
-		if n > 0 {
-			_, err = conn.Write(buffer[:n])
+
+		bytesSent := 0
+		for bytesSent < n {
+			sent, err := conn.Write(buffer[bytesSent:n])
 			if err != nil {
-				fmt.Printf("发送文件块失败：%s", err)
+				fmt.Println("发送文件块失败，具体错误是：%v", err)
 			}
-			totalSent += n
-
-			// 显示进度
-			progress := float64(totalSent) / float64(fileInfo.Size()) * 100
-			fmt.Printf("\r传输进度：%.2f%%", progress)
+			bytesSent += sent
 		}
-
-		if err != nil {
-			break
-		}
-	}
-	// 发送结束标志
-	_, err = conn.Write([]byte("<EOF>"))
-	if err != nil {
-		return fmt.Errorf("发送结束标志失败，具体错误是：%s", err)
+		totalSent += n
+		// 显示进度
+		progress := float64(totalSent) / float64(fileInfo.Size()) * 100
+		fmt.Printf("\r传输进度：%.2f%%", progress)
 	}
 
+	// 确保最后刷新到100%
+	fmt.Printf("\r传输进度：100.00%%\n")
 	fmt.Println("\n文件传输已完成")
 	return nil
 }

@@ -2,8 +2,8 @@
 package main
 
 import (
-	"MDAtest/client/role_client"
-	"MDAtest/server/role_server"
+	"MDA/client/role_client"
+	"MDA/server/role_server"
 	"bufio"
 	"fmt"
 	"os"
