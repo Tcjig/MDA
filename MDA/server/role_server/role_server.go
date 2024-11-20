@@ -1,7 +1,7 @@
 package role_server
 
 import (
-	"MDA/server/file_receive"
+	"MDAtest/server/file_receive"
 	"bufio"
 	"fmt"
 	"net"
@@ -17,15 +17,15 @@ func Server() {
 	if err != nil {
 		fmt.Println("监听失败，具体错误是：", err)
 	}
+	defer listen.Close()
 	fmt.Println("监听客户端成功，等待客户端连接...")
 
 	// 服务端等待客户端连接
 	conn, err := listen.Accept()
-	clientIP = conn.RemoteAddr().String()
 	if err != nil {
 		fmt.Println("等待客户端连接失败，具体错误是：", err)
 	} else {
-		fmt.Printf("客户端连接成功，通信通道是：%v，客户端信息是：%v", conn.RemoteAddr(), conn.LocalAddr())
+		fmt.Printf("客户端连接成功，通信通道是：%v，客户端信息是：%v\n", conn.RemoteAddr(), conn.LocalAddr())
 	}
 	defer conn.Close()
 
@@ -41,9 +41,4 @@ func Server() {
 	if err != nil {
 		fmt.Println("文件接受失败，具体错误是：", err)
 	}
-}
-
-// 获取连接的用户IP信息
-func GetClientIp() string {
-	return clientIP
 }

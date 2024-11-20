@@ -16,7 +16,7 @@ func ReceiveSmallFile(conn net.Conn, savePath string) error {
 	}
 
 	// 创建目标文件
-	file, err := os.Open(savePath)
+	file, err := os.Create(savePath)
 	if err != nil {
 		fmt.Println("创建文件失败，具体错误是：", err)
 	}
@@ -41,7 +41,7 @@ func ReceiveSmallFile(conn net.Conn, savePath string) error {
 
 		// 显示文件接收进度
 		progress := float64(totalReceived) / float64(fileSize) * 100
-		fmt.Printf("接受进度：%.2%%\r", progress)
+		fmt.Printf("接收进度：%.2f%%\r", progress)
 
 		// 文件接收完成
 		if err == io.EOF {

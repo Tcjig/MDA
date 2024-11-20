@@ -2,8 +2,8 @@
 package main
 
 import (
-	"MDA/client/role_client"
-	"MDA/server/role_server"
+	"MDAtest/client/role_client"
+	"MDAtest/server/role_server"
 	"bufio"
 	"fmt"
 	"os"
@@ -17,8 +17,7 @@ func main() {
 	fmt.Println("欢迎来到MDA，请输入您的选项，共有四个选项，如下所示")
 	fmt.Println("选项1：作为服务端接收文件")
 	fmt.Println("选项2：作为客户端传输文件")
-	fmt.Println("选项3：查看局域网内的用户")
-	fmt.Println("选项4：退出MDA")
+	fmt.Println("选项3：退出MDA")
 	fmt.Print("请输入您的选择：")
 
 	choiceStr, err := reader.ReadString('\n')
@@ -41,9 +40,6 @@ func main() {
 		// 作为客户端
 		role_client.Client()
 	} else if choice == 3 {
-		// 查看连接用户的IP地址
-		role_server.GetClientIp()
-	} else if choice == 4 {
 		// 退出程序
 		fmt.Println("正在退出MDA中...")
 		os.Exit(0)

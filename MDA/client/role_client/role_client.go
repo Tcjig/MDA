@@ -1,7 +1,7 @@
 package role_client
 
 import (
-	"MDA/client/file_transfer"
+	"MDAtest/client/file_transfer"
 	"bufio"
 	"fmt"
 	"net"
@@ -15,11 +15,12 @@ func Client() {
 	if err != nil {
 		fmt.Println("连接服务端失败，具体错误是：", err)
 	}
+	defer conn.Close()
 	fmt.Println("连接服务端成功，通信通道为：", conn.RemoteAddr())
 
 	// 获取用户输入的传输文件路径
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("请输入需要传输的文件路径：")
+	fmt.Print("请输入需要传输的文件路径：")
 	filePath, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("输入传输文件路径错误，具体错误是：", err)
@@ -27,7 +28,7 @@ func Client() {
 	// 去除掉路径末尾的换行符
 	filePath = filePath[:len(filePath)-1]
 
-	err = file_transfer.TransferSmallFile(filePath, conn.RemoteAddr().String())
+	err = file_transfer.TransferSmallFile(filePath, "127.0.0.1:8080")
 	if err != nil {
 		fmt.Println("文件传输失败，具体错误是：", err)
 	}
