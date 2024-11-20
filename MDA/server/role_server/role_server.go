@@ -1,7 +1,7 @@
 package role_server
 
 import (
-	"MDA/server/file_receive"
+	"MDAtest/server/file_receive"
 	"bufio"
 	"fmt"
 	"net"
@@ -22,35 +22,73 @@ func Server() {
 	defer listen.Close()
 	fmt.Println("监听客户端成功，等待客户端连接...")
 
-	// 服务端等待客户端连接
-	conn, err := listen.Accept()
-	if err != nil {
-		fmt.Println("等待客户端连接失败，具体错误是：", err)
-		return
-	}
-	defer conn.Close()
-	fmt.Printf("客户端连接成功，通信通道是：%v，客户端信息是：%v\n", conn.RemoteAddr(), conn.LocalAddr())
+	// 使用for循环，以便不间断接收客户端连接
+	for {
+		conn, err := listen.Accept()
+		if err != nil {
+			fmt.Println("接收客户端连接失败，具体错误是：", err)
+			continue
+		}
+		fmt.Printf("客户端连接成功，客户端地址：%v\n", conn.RemoteAddr())
 
-	// 获取用户输入的保存文件路径
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("请输入需要保存的文件路径：")
-	savePath, err := reader.ReadString('\n') // 读取用户输入内容(包含换行符'\n')
-	if err != nil {
-		fmt.Println("输入保存文件路径错误，具体错误是：", err)
-		return
+		// 为每个客户端启动独立的协程
+		go handleClient(conn)
 	}
-	savePath = strings.TrimSpace(savePath)
-	if savePath == "" {
-		fmt.Println("保存路径不能为空")
+}
+
+// 处理客户端的连接
+func handleClient(conn net.Conn) {
+	defer conn.Close()
+
+	savePath, err := getSavePath()
+	if err != nil {
+		fmt.Println("获取保存路径失败，具体错误是：", err)
 		return
 	}
 
 	// 调用接收文件模块
 	err = file_receive.ReceiveSmallFile(conn, savePath)
 	if err != nil {
-		fmt.Printf("文件接受失败，保存文件路径为：%s，具体错误是：%v", savePath, err)
+		fmt.Printf("文件接收失败，保存文件路径为：%s,具体错误是：%v\n", savePath, err)
 		return
 	}
 
-	fmt.Println("文件接收成功")
+	fmt.Printf("文件接收成功，已保存至：%s\n", savePath)
+}
+
+// 获取用户的保存路径
+func getSavePath() (string, error) {
+	// 获取用户输入的保存文件地址
+	fmt.Print("请输入需要保存文件的路径：")
+	reader := bufio.NewReader(os.Stdin)
+
+	// 读取用户输入
+	savePath, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	// 去掉多余的空格和换行符
+	savePath = strings.TrimSpace(savePath)
+	if savePath == "" {
+		return "", fmt.Errorf("保存路径不能为空")
+	}
+
+	// 效验路径合法性
+	if !isValidPath(savePath) {
+		return "", fmt.Errorf("保存路径无效：%s", savePath)
+	}
+
+	return savePath, nil
+}
+
+// 校验路径是否合法
+func isValidPath(path string) bool {
+	illegalChars := []string{"*", "?", "<", ">", "|"}
+	for _, char := range illegalChars {
+		if strings.Contains(path, char) {
+			return false
+		}
+	}
+	return true
 }
