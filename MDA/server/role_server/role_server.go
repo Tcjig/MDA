@@ -33,7 +33,7 @@ func Server() {
 	// 获取用户输入的保存文件路径
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("请输入需要保存的文件路径：")
-	savePath, err := reader.ReadString('\n')
+	savePath, err := reader.ReadString('\n') // 读取用户输入内容(包含换行符'\n')
 	if err != nil {
 		fmt.Println("输入保存文件路径错误，具体错误是：", err)
 		return
