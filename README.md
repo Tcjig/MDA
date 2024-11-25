@@ -14,7 +14,7 @@ client：向服务端请求连接
 ### **/file_function**
 文件的传输和接收功能
 #### /file_delivery
-文件的传输，被客户端调用
+负责文件的传输，被客户端调用
 
 delivary_PathCheck：传输路径的输入和检查
 
